@@ -4,9 +4,9 @@
   "description": "Server del PIA para la materia de Programacion Web",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "echo build",
-    "dev": "echo dev"
+    "dev": "echo dev",
+    "test": "echo test"
   },
   "author": "",
   "license": "ISC"
