@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Comentario {
+  id                  Int                   @id @default(autoincrement())
+  usuario_id          Int
+  resena_id           Int                   @map("reseña_id")
+  comentario_padre    Int
+  contenido           String                @db.VarChar(255)
+  fecha_creado        DateTime              @default(now()) @db.Timestamptz(6)
+  fecha_actualizado   DateTime?             @db.Timestamptz(6)
+  fecha_eliminado     DateTime?             @db.Timestamptz(6)
+  Comentario          Comentario            @relation("ComentarioToComentario", fields: [comentario_padre], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  other_Comentario    Comentario[]          @relation("ComentarioToComentario")
+  Resena              Resena                @relation(fields: [resena_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Usuario             Usuario               @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Reaccion_Comentario Reaccion_Comentario[]
+}
+
+model Favorito {
+  usuario_id   Int
+  resena_id    Int      @map("reseña_id")
+  fecha_creado DateTime @default(now()) @db.Timestamptz(6)
+  Resena       Resena   @relation(fields: [resena_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Usuario      Usuario  @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([usuario_id, resena_id])
+}
+
+model Reaccion_Comentario {
+  usuario_id        Int
+  comentario_id     Int
+  tipo_reaccion_id  Int
+  fecha_creado      DateTime      @default(now()) @db.Timestamptz(6)
+  fecha_actualizado DateTime?     @db.Timestamptz(6)
+  fecha_eliminado   DateTime?     @db.Timestamptz(6)
+  Comentario        Comentario    @relation(fields: [comentario_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Tipo_Reaccion     Tipo_Reaccion @relation(fields: [tipo_reaccion_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Usuario           Usuario       @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([usuario_id, comentario_id])
+}
+
+model Resena {
+  id                Int          @id @default(autoincrement())
+  usuario_id        Int
+  pelicula          Int
+  titulo_resena     String       @map("titulo_reseña") @db.VarChar(255)
+  contenido         String       @db.VarChar(255)
+  calificacion      Int
+  fecha_creado      DateTime     @default(now()) @db.Timestamptz(6)
+  fecha_actualizado DateTime?    @db.Timestamptz(6)
+  fecha_eliminado   DateTime?    @db.Timestamptz(6)
+  Comentario        Comentario[]
+  Favorito          Favorito[]
+  Usuario           Usuario      @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("Reseña")
+}
+
+model Rol {
+  id          Int       @id @default(autoincrement())
+  nombre      String    @db.VarChar(255)
+  descripcion String    @db.VarChar(255)
+  Usuario     Usuario[]
+}
+
+model Tipo_Reaccion {
+  id                  Int                   @id @default(autoincrement())
+  nombre              String                @db.VarChar(50)
+  descripcion         String                @db.VarChar(255)
+  Reaccion_Comentario Reaccion_Comentario[]
+}
+
+model Usuario {
+  id                  Int                   @id @default(autoincrement())
+  nombre              String                @unique @db.VarChar(50)
+  email               String                @unique @db.VarChar(255)
+  contrasena          String                @map("contraseña") @db.VarChar(255)
+  rol_id              Int
+  biografia           String?               @db.VarChar(255)
+  fecha_creado        DateTime              @default(now()) @db.Timestamptz(6)
+  fecha_actualizado   DateTime?             @db.Timestamptz(6)
+  fecha_eliminado     DateTime?             @db.Timestamptz(6)
+  Comentario          Comentario[]
+  Favorito            Favorito[]
+  Reaccion_Comentario Reaccion_Comentario[]
+  Resena              Resena[]
+  Rol                 Rol                   @relation(fields: [rol_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
