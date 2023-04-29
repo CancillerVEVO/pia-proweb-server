@@ -1,51 +1,35 @@
-const formatMoviePopular = (movie) => {
-  const {
-    id,
-    title,
-    overview,
-    poster_path: posterPath,
-    release_date: releaseDate,
-  } = movie;
+const formatMovieImageUrl = (path) => {
+  return path ? process.env.TMDB_IMAGE_URL + path : null;
+};
 
+const formatMovieBase = (movie) => {
   return {
-    id,
-    title,
-    overview,
-    posterPath: posterPath
-      ? "https://image.tmdb.org/t/p/original" + posterPath
-      : null,
-    releaseDate,
+    id: movie.id,
+    title: movie.title,
+    overview: movie.overview,
+    posterPath: formatMovieImageUrl(movie.poster_path),
+    releaseDate: movie.release_date,
   };
+};
+
+const formatMovieBaseMany = (movies) => {
+  return movies.map((movie) => formatMovieBase(movie));
 };
 
 const formatMovieDetails = (movie) => {
-  const {
-    id,
-    title,
-    overview,
-    poster_path: posterPath,
-    release_date: releaseDate,
-    genres,
-    runtime,
-    backdrop_path: backdropPath,
-  } = movie;
+  const formattedMovie = formatMovieBase(movie);
 
   return {
-    id,
-    title,
-    overview,
-    posterPath: posterPath
-      ? "https://image.tmdb.org/t/p/original" + posterPath
-      : null,
-    releaseDate,
-    genres: genres.map((genre) => genre.name),
-    runtime,
-    backdropPath: backdropPath
-      ? "https://image.tmdb.org/t/p/original" + backdropPath
-      : null,
+    ...formattedMovie,
+    genres: movie.genres.map((genre) => genre.name),
+    runtime: movie.runtime,
+    backdropPath: formatMovieImageUrl(movie.backdrop_path),
+    tagline: movie.tagline,
   };
 };
+
 module.exports = {
-  formatMoviePopular,
+  formatMovieBase,
+  formatMovieBaseMany,
   formatMovieDetails,
 };
