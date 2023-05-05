@@ -1,4 +1,5 @@
 const { MovieDb } = require("moviedb-promise");
+const AppError = require("../utils/AppError");
 const { formatMovieBaseMany, formatMovieDetails } = require("./tmdb.utils");
 
 class Tmdb {
@@ -11,91 +12,111 @@ class Tmdb {
   }
 
   async getPopularMovies({ page }) {
-    // HACK: The MovieDB API has a limit of 500 pages???
-    if (page > this.MAX_PAGES)
-      return {
+    try {
+      // HACK: The MovieDB API has a limit of 500 pages???
+      if (page > this.MAX_PAGES)
+        return {
+          page,
+          totalPages: this.MAX_PAGES,
+          totalResults: this.MAX_RESULTS,
+          results: [],
+        };
+
+      const data = await this.movieDb.discoverMovie({
         page,
-        totalPages: this.MAX_PAGES,
-        totalResults: this.MAX_RESULTS,
-        results: [],
+        include_adult: false,
+      });
+
+      const results = formatMovieBaseMany(data.results);
+
+      return {
+        page: data.page,
+        totalPages:
+          data.total_pages > this.MAX_PAGES ? this.MAX_PAGES : data.total_pages,
+        totalResults:
+          data.total_results > this.MAX_RESULTS
+            ? this.MAX_RESULTS
+            : data.total_results,
+        results,
       };
-
-    const data = await this.movieDb.discoverMovie({
-      page,
-      include_adult: false,
-    });
-
-    const results = formatMovieBaseMany(data.results);
-
-    return {
-      page: data.page,
-      totalPages:
-        data.total_pages > this.MAX_PAGES ? this.MAX_PAGES : data.total_pages,
-      totalResults:
-        data.total_results > this.MAX_RESULTS
-          ? this.MAX_RESULTS
-          : data.total_results,
-      results,
-    };
+    } catch (error) {
+      throw AppError.handleAxiosError(error);
+    }
   }
 
   async getMovieDetails({ movieId }) {
-    const data = await this.movieDb.movieInfo({ id: movieId });
+    try {
+      const data = await this.movieDb.movieInfo({ id: movieId });
 
-    return formatMovieDetails(data);
+      return formatMovieDetails(data);
+    } catch (error) {
+      throw AppError.handleAxiosError(error);
+    }
   }
 
   async searchMovies({ query, page }) {
-    const data = await this.movieDb.searchMovie({
-      query,
-      page,
-      include_adult: false,
-    });
+    try {
+      const data = await this.movieDb.searchMovie({
+        query,
+        page,
+        include_adult: false,
+      });
 
-    const results = formatMovieBaseMany(data.results);
+      const results = formatMovieBaseMany(data.results);
 
-    return {
-      page: data.page,
-      totalPages: data.total_pages,
-      totalResults: data.total_results,
-      results,
-    };
+      return {
+        page: data.page,
+        totalPages: data.total_pages,
+        totalResults: data.total_results,
+        results,
+      };
+    } catch (error) {
+      throw AppError.handleAxiosError(error);
+    }
   }
 
   async getMovieGenres() {
-    const data = await this.movieDb.genreMovieList();
+    try {
+      const data = await this.movieDb.genreMovieList();
 
-    return data;
+      return data;
+    } catch (error) {
+      throw AppError.handleAxiosError(error);
+    }
   }
 
   async getMovieByGenre({ genreId, page }) {
-    // HACK: The MovieDB API has a limit of 500 pages???
-    if (page > this.MAX_PAGES)
-      return {
+    try {
+      // HACK: The MovieDB API has a limit of 500 pages???
+      if (page > this.MAX_PAGES)
+        return {
+          page,
+          totalPages: this.MAX_PAGES,
+          totalResults: this.MAX_RESULTS,
+          results: [],
+        };
+
+      const data = await this.movieDb.discoverMovie({
+        with_genres: genreId,
         page,
-        totalPages: this.MAX_PAGES,
-        totalResults: this.MAX_RESULTS,
-        results: [],
+        include_adult: false,
+      });
+
+      const results = formatMovieBaseMany(data.results);
+
+      return {
+        page: data.page,
+        totalPages:
+          data.total_pages > this.MAX_PAGES ? this.MAX_PAGES : data.total_pages,
+        totalResults:
+          data.total_results > this.MAX_RESULTS
+            ? this.MAX_RESULTS
+            : data.total_results,
+        results,
       };
-
-    const data = await this.movieDb.discoverMovie({
-      with_genres: genreId,
-      page,
-      include_adult: false,
-    });
-
-    const results = formatMovieBaseMany(data.results);
-
-    return {
-      page: data.page,
-      totalPages:
-        data.total_pages > this.MAX_PAGES ? this.MAX_PAGES : data.total_pages,
-      totalResults:
-        data.total_results > this.MAX_RESULTS
-          ? this.MAX_RESULTS
-          : data.total_results,
-      results,
-    };
+    } catch (error) {
+      throw AppError.handleAxiosError(error);
+    }
   }
 }
 
