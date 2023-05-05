@@ -1,8 +1,5 @@
 const { MovieDb } = require("moviedb-promise");
-const {
-  formatMovieBaseMany,
-  formatMovieDetails,
-} = require("./utils/movie.formatter");
+const { formatMovieBaseMany, formatMovieDetails } = require("./tmdb.utils");
 
 class Tmdb {
   MAX_PAGES = 500;

@@ -1,7 +1,8 @@
 const tmdb = require("../tmdb");
+const AppError = require("../utils/AppError");
 
 module.exports = {
-  getPopularMoviesController: async (req, res) => {
+  getPopularMoviesController: async (req, res, next) => {
     try {
       const movies = await tmdb.getPopularMovies({
         page: req.query.page ? parseInt(req.query.page) : 1,
@@ -9,28 +10,23 @@ module.exports = {
       res.status(200);
       res.json(movies);
     } catch (error) {
-      res.status(
-        error.response && error.response.status ? error.response.status : 500
-      );
-      res.json({ error: error.message });
+      next(AppError.handleAxiosError(error));
     }
   },
 
-  getMovieDetailsController: async (req, res) => {
+  getMovieDetailsController: async (req, res, next) => {
     try {
       const movie = await tmdb.getMovieDetails({
         movieId: req.params.movieId,
       });
+
       res.status(200);
       res.json(movie);
     } catch (error) {
-      res.status(
-        error.response && error.response.status ? error.response.status : 500
-      );
-      res.json({ error: error.message });
+      next(AppError.handleAxiosError(error));
     }
   },
-  searchMoviesController: async (req, res) => {
+  searchMoviesController: async (req, res, next) => {
     try {
       const movies = await tmdb.searchMovies({
         query: req.query.name,
@@ -39,39 +35,30 @@ module.exports = {
       res.status(200);
       res.json(movies);
     } catch (error) {
-      res.status(
-        error.response && error.response.status ? error.response.status : 500
-      );
-      res.json({ error: error.message });
+      next(AppError.handleAxiosError(error));
     }
   },
-  getMovieGenresController: async (req, res) => {
+  getMovieGenresController: async (req, res, next) => {
     try {
       const genres = await tmdb.getMovieGenres();
 
       res.status(200);
       res.json(genres);
     } catch (error) {
-      res.status(
-        error.response && error.response.status ? error.response.status : 500
-      );
-      res.json({ error: error.message });
+      next(AppError.handleAxiosError(error));
     }
   },
-  getMoviesByGenreController: async (req, res) => {
+  getMoviesByGenreController: async (req, res, next) => {
     try {
       const movies = await tmdb.getMovieByGenre({
-        genreId: req.params.genreId,
+        genreId: req.params.genreId ? req.params.genreId : 28,
         page: req.query.page ? req.query.page : 1,
       });
 
       res.status(200);
       res.json(movies);
     } catch (error) {
-      res.status(
-        error.response && error.response.status ? error.response.status : 500
-      );
-      res.json({ error: error.message });
+      next(AppError.handleAxiosError(error));
     }
   },
 };

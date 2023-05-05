@@ -1,12 +1,13 @@
-const express = require("express");
-const router = express.Router();
 const {
   getPopularMoviesController,
   getMovieDetailsController,
   searchMoviesController,
   getMovieGenresController,
   getMoviesByGenreController,
-} = require("../controllers/movies.controller");
+} = require("./movies.controller");
+
+const express = require("express");
+const router = express.Router();
 
 router.get("/", getPopularMoviesController);
 router.get("/search", searchMoviesController);
