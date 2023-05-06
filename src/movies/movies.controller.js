@@ -1,5 +1,4 @@
 const tmdb = require("../tmdb");
-const AppError = require("../utils/AppError");
 
 module.exports = {
   getPopularMoviesController: async (req, res, next) => {
@@ -10,7 +9,7 @@ module.exports = {
       res.status(200);
       res.json(movies);
     } catch (error) {
-      next(AppError.handleAxiosError(error));
+      next(error);
     }
   },
 
@@ -23,7 +22,7 @@ module.exports = {
       res.status(200);
       res.json(movie);
     } catch (error) {
-      next(AppError.handleAxiosError(error));
+      next(error);
     }
   },
   searchMoviesController: async (req, res, next) => {
@@ -35,7 +34,7 @@ module.exports = {
       res.status(200);
       res.json(movies);
     } catch (error) {
-      next(AppError.handleAxiosError(error));
+      next(error);
     }
   },
   getMovieGenresController: async (req, res, next) => {
@@ -45,7 +44,7 @@ module.exports = {
       res.status(200);
       res.json(genres);
     } catch (error) {
-      next(AppError.handleAxiosError(error));
+      next(error);
     }
   },
   getMoviesByGenreController: async (req, res, next) => {
@@ -58,7 +57,7 @@ module.exports = {
       res.status(200);
       res.json(movies);
     } catch (error) {
-      next(AppError.handleAxiosError(error));
+      next(error);
     }
   },
 };
