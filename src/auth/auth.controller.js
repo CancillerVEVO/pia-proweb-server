@@ -3,7 +3,9 @@ module.exports = {
     try {
       res.status(200);
       res.send("Register");
-    } catch (error) {}
+    } catch (error) {
+      next(error);
+    }
   },
   loginController: async (req, res, next) => {
     try {

@@ -1,23 +1,16 @@
-const AppError = require("../utils/AppError");
 const { verifyToken } = require("../utils/jwt");
 
-const checkJWT = async (req, res, next) => {
+const checkJWT = async (req, _, next) => {
   try {
-    const token = req.headers.authorization.split(" ")[1];
-    if (!token) {
-      throw new AppError.unauthorized(
-        "No se ha enviado un token de autorización"
-      );
-    }
+    const { authorization = "" } = req.headers;
+    const token = authorization.split(" ")[1];
 
     const payload = verifyToken(token);
 
     req.user = payload;
     next();
   } catch (error) {
-    throw new AppError.unauthorized(
-      "No se ha podido verificar el token de autorización"
-    );
+    next(error);
   }
 };
 
