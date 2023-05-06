@@ -1,6 +1,6 @@
 const { MovieDb } = require("moviedb-promise");
-const AppError = require("../utils/AppError");
 const { formatMovieBaseMany, formatMovieDetails } = require("./tmdb.utils");
+const { TmdbErrorFactory } = require("../errors/TmdbError");
 
 class Tmdb {
   MAX_PAGES = 500;
@@ -40,7 +40,7 @@ class Tmdb {
         results,
       };
     } catch (error) {
-      throw AppError.handleAxiosError(error);
+      throw TmdbErrorFactory.create(error);
     }
   }
 
@@ -50,7 +50,7 @@ class Tmdb {
 
       return formatMovieDetails(data);
     } catch (error) {
-      throw AppError.handleAxiosError(error);
+      throw TmdbErrorFactory.create(error);
     }
   }
 
@@ -71,7 +71,7 @@ class Tmdb {
         results,
       };
     } catch (error) {
-      throw AppError.handleAxiosError(error);
+      throw TmdbErrorFactory.create(error);
     }
   }
 
@@ -81,7 +81,7 @@ class Tmdb {
 
       return data;
     } catch (error) {
-      throw AppError.handleAxiosError(error);
+      throw TmdbErrorFactory.create(error);
     }
   }
 
@@ -115,7 +115,7 @@ class Tmdb {
         results,
       };
     } catch (error) {
-      throw AppError.handleAxiosError(error);
+      throw TmdbErrorFactory.create(error);
     }
   }
 }
