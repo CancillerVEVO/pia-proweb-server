@@ -1,4 +1,4 @@
-const { verifyToken } = require("../utils/jwt");
+const { verifyToken } = require("../auth/utils/jsonwebtoken");
 
 const checkJWT = async (req, _, next) => {
   try {
