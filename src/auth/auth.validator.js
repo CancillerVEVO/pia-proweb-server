@@ -11,12 +11,13 @@ const registerValidator = [
     .isEmail()
     .withMessage("El email no es válido.")
     .exists()
-    .withMessage("El email es requerido."),
-  body("contraseña")
-    .isLength({ min: 6 })
+    .withMessage("El email es requerido.")
+    .isLength({ max: 200 }),
+  body("password")
+    .isLength({ min: 6, max: 200 })
     .withMessage("La contraseña debe tener un mínimo de 6 caracteres."),
-  body("confirmarContraseña").custom((value, { req }) => {
-    if (value !== req.body.contraseña) {
+  body("passwordConfirmation").custom((value, { req }) => {
+    if (value !== req.body.password) {
       throw new Error("Las contraseñas no coinciden.");
     }
     return true;

@@ -24,6 +24,16 @@ class UnauthorizedError extends AppError {
   }
 }
 
+class ConflictError extends AppError {
+  constructor(message, error = null) {
+    super(message || "Conflicto", 409, error);
+  }
+
+  static create(message, error = null) {
+    return new ConflictError(message, error);
+  }
+}
+
 class ForbiddenError extends AppError {
   constructor(message, error = null) {
     super(message || "Prohibido", 403, error);
@@ -60,4 +70,5 @@ module.exports = {
   ForbiddenError,
   NotFoundError,
   BadRequestError,
+  ConflictError,
 };
