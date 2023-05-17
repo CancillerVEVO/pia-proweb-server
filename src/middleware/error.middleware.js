@@ -2,9 +2,9 @@ const {
   JwtError,
   InvalidTokenError,
   TokenNotProvided,
-} = require("../errors/JwtError");
-const { AppError } = require("../errors/AppError");
-const { TmdbError } = require("../errors/TmdbError");
+} = require("../handlers/errors/JwtError");
+const { AppError } = require("../handlers/errors/AppError");
+const { TmdbError } = require("../handlers/errors/TmdbError");
 
 const errorHandler = (err, _req, res, _next) => {
   console.error(err);

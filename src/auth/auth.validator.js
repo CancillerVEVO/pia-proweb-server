@@ -31,7 +31,7 @@ const loginValidator = [
     .withMessage("El email es requerido.")
     .isLength({ min: 1 })
     .withMessage("El email no puede estar vacío."),
-  body("contraseña")
+  body("password")
     .exists()
     .withMessage("La contraseña es requerida.")
     .isLength({ min: 1 })
