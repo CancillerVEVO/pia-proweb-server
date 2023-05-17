@@ -1,6 +1,6 @@
 const { MovieDb } = require("moviedb-promise");
 const { formatMovieBaseMany, formatMovieDetails } = require("./tmdb.utils");
-const { TmdbErrorFactory } = require("../errors/TmdbError");
+const { TmdbErrorFactory } = require("../handlers/errors/TmdbError");
 
 class Tmdb {
   MAX_PAGES = 500;

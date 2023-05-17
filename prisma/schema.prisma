@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_SERVER")
 }
 
 model Comentario {
@@ -64,7 +64,7 @@ model Usuario {
   nombre              String                @unique @db.VarChar(50)
   email               String                @unique @db.VarChar(255)
   password            String                @db.VarChar(255)
-  rol_id              Int
+  rol_id              Int                   @default(2)
   biografia           String?               @db.VarChar(255)
   fecha_creado        DateTime              @default(now()) @db.Timestamptz(6)
   fecha_actualizado   DateTime?             @db.Timestamptz(6)

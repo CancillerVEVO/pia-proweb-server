@@ -1,16 +1,36 @@
+const {
+  createdResponse,
+  successResponse,
+} = require("../handlers/ResponseHandler");
+const { login, register, me } = require("./auth.handler");
+
 module.exports = {
-  registerController: async (req, res, next) => {
+  registerController: async ({ body }, res, next) => {
     try {
-      res.status(200);
-      res.send("Register");
+      const user = await register(body);
+
+      return createdResponse(user, "Usuario creado con exito!")(res);
     } catch (error) {
       next(error);
     }
   },
-  loginController: async (req, res, next) => {
+  loginController: async ({ body }, res, next) => {
     try {
-      res.status(200);
-      res.send("Login");
+      const token = await login(body);
+
+      return createdResponse({ token }, "Inicio de sesión exitoso!")(res);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  meController: async ({ user }, res, next) => {
+    try {
+      console.log(user);
+      console.log(parseInt(user));
+      const data = await me(parseInt(user));
+
+      return successResponse(data)(res);
     } catch (error) {
       next(error);
     }
