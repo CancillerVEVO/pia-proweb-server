@@ -20,7 +20,7 @@ const successResponse = (data = null, message = "Operacion exitosa!") => {
 
 const noContentResponse = (message = "No hay contenido") => {
   return (res) => {
-    res.status(204).json({
+    res.status(200).json({
       status: "success",
       message,
       data: null,

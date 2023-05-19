@@ -1,6 +1,10 @@
 const express = require("express");
 const checkJWT = require("../../middleware/session.middleware");
-const { bodyValidator, paramValidator } = require("./review.validator");
+const {
+  bodyCreateValidator,
+  paramValidator,
+  bodyUpdateValidator,
+} = require("./review.validator");
 const {
   createReviewController,
   getAllReviewsController,
@@ -11,14 +15,15 @@ const {
 
 const router = express.Router();
 
-router.post("/", checkJWT, bodyValidator, createReviewController);
+router.post("/", checkJWT, bodyCreateValidator, createReviewController);
 router.get("/", getAllReviewsController);
 router.get("/:reviewId", checkJWT, paramValidator, getReviewByIdController);
 router.put(
   "/:reviewId",
   checkJWT,
+  bodyUpdateValidator,
   paramValidator,
-  bodyValidator,
+
   updateReviewController
 );
 router.delete("/:reviewId", checkJWT, paramValidator, deleteReviewController);
