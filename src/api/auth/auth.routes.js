@@ -1,5 +1,5 @@
 const express = require("express");
-const checkJWT = require("../middleware/session.middleware");
+const checkJWT = require("../../middleware/session.middleware");
 const {
   registerController,
   loginController,

@@ -1,7 +1,7 @@
 const {
   createdResponse,
   successResponse,
-} = require("../handlers/ResponseHandler");
+} = require("../../handlers/ResponseHandler");
 const { login, register, me } = require("./auth.handler");
 
 module.exports = {
@@ -26,10 +26,7 @@ module.exports = {
 
   meController: async ({ user }, res, next) => {
     try {
-      console.log(user);
-      console.log(parseInt(user));
       const data = await me(parseInt(user));
-
       return successResponse(data)(res);
     } catch (error) {
       next(error);
