@@ -8,6 +8,8 @@ const {
   getReviewById,
   updateReview,
   deleteReview,
+  getAllReviews,
+  getAllReviewsByMovie,
 } = require("./review.handler");
 
 const createReviewController = async ({ body, user }, res, next) => {
@@ -19,7 +21,15 @@ const createReviewController = async ({ body, user }, res, next) => {
     next(error);
   }
 };
-const getAllReviewsController = async (req, res, next) => {};
+const getAllReviewsController = async (req, res, next) => {
+  try {
+    const reviews = await getAllReviews();
+
+    return successResponse({ reviews })(res);
+  } catch (error) {
+    next(error);
+  }
+};
 const getReviewByIdController = async ({ params, user }, res, next) => {
   try {
     const review = await getReviewById(
@@ -54,10 +64,21 @@ const deleteReviewController = async ({ user, params }, res, next) => {
   }
 };
 
+const getAllReviewsByMovieController = async ({ params }, res, next) => {
+  try {
+    const reviews = await getAllReviewsByMovie(parseInt(params.movieId));
+
+    return successResponse(reviews)(res);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createReviewController,
   getAllReviewsController,
   getReviewByIdController,
   updateReviewController,
   deleteReviewController,
+  getAllReviewsByMovieController,
 };
