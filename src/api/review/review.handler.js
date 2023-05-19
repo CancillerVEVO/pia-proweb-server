@@ -120,12 +120,83 @@ const deleteReview = async (reviewId, userId) => {
 
   return true;
 };
-const getAllReviews = async () => {};
-const getReviewsByMovieId = async () => {};
+const getAllReviews = async () => {
+  const reviews = await prisma.critica.findMany({
+    include: {
+      Usuario: true,
+    },
+  });
+
+  if (!reviews) {
+    return [];
+  }
+
+  const movies = await Promise.all(
+    reviews.map(async (review) => {
+      const pelicula = await tmdb.getMovieDetails({ movieId: review.pelicula });
+      return pelicula;
+    })
+  );
+
+  return reviews.map((review, index) => {
+    return {
+      id: review.id,
+      titulo: review.titulo_critica,
+      contenido: review.contenido,
+      calificacion: review.calificacion,
+      fechaCreacion: review.fecha_creado,
+      autor: {
+        id: review.Usuario.id,
+        nombre: review.Usuario.nombre,
+        email: review.Usuario.email,
+      },
+      pelicula: movies[index],
+    };
+  });
+};
+
+const getAllReviewsByMovie = async (movieId) => {
+  const reviews = await prisma.critica.findMany({
+    where: {
+      pelicula: movieId,
+    },
+    include: {
+      Usuario: true,
+    },
+  });
+
+  if (!reviews) {
+    return [];
+  }
+
+  const movie = await tmdb.getMovieDetails({ movieId });
+
+  const cleanReviews = reviews.map((review) => {
+    return {
+      id: review.id,
+      titulo: review.titulo_critica,
+      contenido: review.contenido,
+      calificacion: review.calificacion,
+      fechaCreacion: review.fecha_creado,
+      autor: {
+        id: review.Usuario.id,
+        nombre: review.Usuario.nombre,
+        email: review.Usuario.email,
+      },
+    };
+  });
+
+  return {
+    pelicula: movie,
+    reviews: cleanReviews,
+  };
+};
 
 module.exports = {
   createReview,
   getReviewById,
   updateReview,
   deleteReview,
+  getAllReviews,
+  getAllReviewsByMovie,
 };

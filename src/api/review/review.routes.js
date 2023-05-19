@@ -4,6 +4,7 @@ const {
   bodyCreateValidator,
   paramValidator,
   bodyUpdateValidator,
+  movieParamValidator,
 } = require("./review.validator");
 const {
   createReviewController,
@@ -11,6 +12,7 @@ const {
   getReviewByIdController,
   updateReviewController,
   deleteReviewController,
+  getAllReviewsByMovieController,
 } = require("./review.controller");
 
 const router = express.Router();
@@ -27,5 +29,12 @@ router.put(
   updateReviewController
 );
 router.delete("/:reviewId", checkJWT, paramValidator, deleteReviewController);
+router.get(
+  "/movie/:movieId",
+  movieParamValidator,
+  getAllReviewsByMovieController
+);
+
+/* router.use("/:reviewId/comments", require("../comment/comment.routes")); */
 
 module.exports = router;

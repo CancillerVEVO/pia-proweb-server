@@ -69,4 +69,22 @@ const paramValidator = [
   validationErrors,
 ];
 
-module.exports = { bodyCreateValidator, paramValidator, bodyUpdateValidator };
+const movieParamValidator = [
+  param("movieId")
+    .isInt()
+    .withMessage("El id de la pelicula debe ser un numero entero")
+    .custom((value) => {
+      if (value < 0) {
+        throw new Error("El id de la pelicula debe ser un numero positivo");
+      }
+      return true;
+    }),
+  validationErrors,
+];
+
+module.exports = {
+  bodyCreateValidator,
+  paramValidator,
+  bodyUpdateValidator,
+  movieParamValidator,
+};
