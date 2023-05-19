@@ -1,8 +1,8 @@
-const { prisma } = require("../database/prisma");
+const { prisma } = require("../../database/prisma");
 const {
   UnauthorizedError,
   NotFoundError,
-} = require("../handlers/errors/AppError");
+} = require("../../handlers/errors/AppError");
 const { encrypt, verify } = require("./utils/bcrypt");
 const { generateToken } = require("./utils/jsonwebtoken");
 
