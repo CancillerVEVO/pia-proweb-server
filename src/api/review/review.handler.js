@@ -1,3 +1,4 @@
+const review = require(".");
 const { prisma } = require("../../database/prisma");
 const {
   NotFoundError,
@@ -69,7 +70,62 @@ const getReviewById = async (reviewId, userId) => {
   };
 };
 
+const updateReview = async (
+  reviewId,
+  { titulo, contenido, calificacion },
+  userId
+) => {
+  const isCreator = await prisma.critica.findFirst({
+    where: {
+      id: reviewId,
+      usuario_id: userId,
+    },
+  });
+
+  if (!isCreator) {
+    throw ForbiddenError.create("No tienes permiso para editar esta reseña");
+  }
+
+  const review = await prisma.critica.update({
+    where: {
+      id: reviewId,
+    },
+    data: {
+      titulo_critica: titulo,
+      contenido,
+      calificacion,
+    },
+  });
+
+  return review;
+};
+
+const deleteReview = async (reviewId, userId) => {
+  const isCreator = await prisma.critica.findFirst({
+    where: {
+      id: reviewId,
+      usuario_id: userId,
+    },
+  });
+
+  if (!isCreator) {
+    throw ForbiddenError.create("No tienes permiso para eliminar esta reseña");
+  }
+
+  await prisma.critica.delete({
+    where: {
+      id: reviewId,
+    },
+  });
+
+  return true;
+};
+const getAllReviews = async () => {};
+const getReviewsByMovieId = async () => {};
+
 module.exports = {
   createReview,
   getReviewById,
+  updateReview,
+  deleteReview,
 };

@@ -3,13 +3,18 @@ const {
   noContentResponse,
   createdResponse,
 } = require("../../handlers/ResponseHandler");
-const { createReview, getReviewById } = require("./review.handler");
+const {
+  createReview,
+  getReviewById,
+  updateReview,
+  deleteReview,
+} = require("./review.handler");
 
 const createReviewController = async ({ body, user }, res, next) => {
   try {
     const review = await createReview(body, parseInt(user));
 
-    return createdResponse({ review }, "Review creada con exito!")(res);
+    return createdResponse({ review }, "Reseña creada con exito!")(res);
   } catch (error) {
     next(error);
   }
@@ -27,8 +32,27 @@ const getReviewByIdController = async ({ params, user }, res, next) => {
     next(error);
   }
 };
-const updateReviewController = async (req, res, next) => {};
-const deleteReviewController = async (req, res, next) => {};
+const updateReviewController = async ({ body, params, user }, res, next) => {
+  try {
+    const review = await updateReview(
+      parseInt(params.reviewId),
+      body,
+      parseInt(user)
+    );
+    return successResponse({ review })(res);
+  } catch (error) {
+    next(error);
+  }
+};
+const deleteReviewController = async ({ user, params }, res, next) => {
+  try {
+    await deleteReview(parseInt(params.reviewId), parseInt(user));
+
+    return noContentResponse("Reseña eliminada con exito!")(res);
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   createReviewController,
