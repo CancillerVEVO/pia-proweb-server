@@ -120,8 +120,15 @@ const deleteReview = async (reviewId, userId) => {
 
   return true;
 };
-const getAllReviews = async () => {
+const getAllReviews = async (skipValue, takeValue) => {
   const reviews = await prisma.critica.findMany({
+    orderBy: {
+      fecha_creado: "desc",
+    },
+
+    take: takeValue,
+    skip: skipValue,
+
     include: {
       Usuario: true,
     },
@@ -138,7 +145,7 @@ const getAllReviews = async () => {
     })
   );
 
-  return reviews.map((review, index) => {
+  const cleanReviews = reviews.map((review, index) => {
     return {
       id: review.id,
       titulo: review.titulo_critica,
@@ -153,10 +160,23 @@ const getAllReviews = async () => {
       pelicula: movies[index],
     };
   });
+
+  return {
+    page: skipValue / takeValue + 1,
+    totalResults: reviews.length,
+    reviews: cleanReviews,
+  };
 };
 
-const getAllReviewsByMovie = async (movieId) => {
+const getAllReviewsByMovie = async (movieId, skipValue, takeValue) => {
   const reviews = await prisma.critica.findMany({
+    orderBy: {
+      fecha_creado: "desc",
+    },
+
+    take: takeValue,
+    skip: skipValue,
+
     where: {
       pelicula: movieId,
     },
@@ -187,6 +207,8 @@ const getAllReviewsByMovie = async (movieId) => {
   });
 
   return {
+    page: skipValue / takeValue + 1,
+    totalResults: reviews.length,
     pelicula: movie,
     reviews: cleanReviews,
   };
