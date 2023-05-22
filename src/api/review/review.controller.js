@@ -12,6 +12,8 @@ const {
   getAllReviewsByMovie,
 } = require("./review.handler");
 
+const PER_PAGE = 10;
+
 const createReviewController = async ({ body, user }, res, next) => {
   try {
     const review = await createReview(body, parseInt(user));
@@ -23,9 +25,10 @@ const createReviewController = async ({ body, user }, res, next) => {
 };
 const getAllReviewsController = async (req, res, next) => {
   try {
-    const reviews = await getAllReviews();
+    const skip = req.query.page ? (Number(req.query.page) - 1) * PER_PAGE : 0;
+    const reviews = await getAllReviews(skip, PER_PAGE);
 
-    return successResponse({ reviews })(res);
+    return successResponse(reviews)(res);
   } catch (error) {
     next(error);
   }
@@ -64,9 +67,14 @@ const deleteReviewController = async ({ user, params }, res, next) => {
   }
 };
 
-const getAllReviewsByMovieController = async ({ params }, res, next) => {
+const getAllReviewsByMovieController = async ({ params, query }, res, next) => {
   try {
-    const reviews = await getAllReviewsByMovie(parseInt(params.movieId));
+    const skipValue = query.page ? (Number(query.page) - 1) * PER_PAGE : 0;
+    const reviews = await getAllReviewsByMovie(
+      Number(params.movieId),
+      skipValue,
+      PER_PAGE
+    );
 
     return successResponse(reviews)(res);
   } catch (error) {
