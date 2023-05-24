@@ -185,24 +185,31 @@ const getCommentById = async (commentId) => {
 };
 
 const getAllComments = async (reviewId) => {
-  const isReview = await prisma.critica.findUnique({
-    where: {
-      id: reviewId,
-    },
-  });
+  const [isReview, totalResults, comments] = await prisma.$transaction([
+    prisma.critica.findUnique({
+      where: {
+        id: reviewId,
+      },
+    }),
+    prisma.comentario.count({
+      where: {
+        critica_id: reviewId,
+      },
+    }),
+
+    prisma.comentario.findMany({
+      where: {
+        critica_id: reviewId,
+      },
+      include: {
+        Usuario: true,
+      },
+    }),
+  ]);
 
   if (!isReview) {
     throw NotFoundError.create("La review no existe");
   }
-
-  const comments = await prisma.comentario.findMany({
-    where: {
-      critica_id: reviewId,
-    },
-    include: {
-      Usuario: true,
-    },
-  });
 
   if (comments.length === 0) {
     return [];
@@ -221,7 +228,12 @@ const getAllComments = async (reviewId) => {
     },
   }));
 
-  return buildCommentTree(comentarios);
+  const commentTree = buildCommentTree(comentarios);
+
+  return {
+    totalResults: totalResults,
+    comentarios: commentTree,
+  };
 };
 
 module.exports = {

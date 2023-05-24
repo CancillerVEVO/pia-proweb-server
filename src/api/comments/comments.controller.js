@@ -11,6 +11,8 @@ const {
   getCommentById,
 } = require("./comments.handler");
 
+const PER_PAGE = 10;
+
 const createCommentController = async ({ params, body, user }, res, next) => {
   try {
     const comentario = await createComment(

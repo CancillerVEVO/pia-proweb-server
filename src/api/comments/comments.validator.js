@@ -1,4 +1,4 @@
-const { param, body } = require("express-validator");
+const { param, body, query } = require("express-validator");
 const validationErrors = require("../../middleware/validation.middleware");
 
 const reviewParamValidator = [
