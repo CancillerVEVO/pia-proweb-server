@@ -56,7 +56,7 @@ const bodyUpdateValidator = [
   validationErrors,
 ];
 
-const paramValidator = [
+const reviewParamValidator = [
   param("reviewId")
     .isInt()
     .withMessage("El id de la review debe ser un numero entero")
@@ -84,7 +84,7 @@ const movieParamValidator = [
 
 module.exports = {
   bodyCreateValidator,
-  paramValidator,
+  reviewParamValidator,
   bodyUpdateValidator,
   movieParamValidator,
 };

@@ -2,10 +2,11 @@ const express = require("express");
 const checkJWT = require("../../middleware/session.middleware");
 const {
   bodyCreateValidator,
-  paramValidator,
+  reviewParamValidator,
   bodyUpdateValidator,
   movieParamValidator,
 } = require("./review.validator");
+
 const {
   createReviewController,
   getAllReviewsController,
@@ -19,21 +20,33 @@ const router = express.Router();
 
 router.post("/", checkJWT, bodyCreateValidator, createReviewController);
 router.get("/", getAllReviewsController);
-router.get("/:reviewId", checkJWT, paramValidator, getReviewByIdController);
+router.get(
+  "/:reviewId",
+  checkJWT,
+  reviewParamValidator,
+  getReviewByIdController
+);
 router.put(
   "/:reviewId",
   checkJWT,
   bodyUpdateValidator,
-  paramValidator,
+  reviewParamValidator,
 
   updateReviewController
 );
-router.delete("/:reviewId", checkJWT, paramValidator, deleteReviewController);
+router.delete(
+  "/:reviewId",
+  checkJWT,
+  reviewParamValidator,
+  deleteReviewController
+);
 router.get(
   "/movie/:movieId",
   movieParamValidator,
   getAllReviewsByMovieController
 );
+
+router.use("/", require("../favorites/index"));
 
 /* router.use("/:reviewId/comments", require("../comment/comment.routes")); */
 
