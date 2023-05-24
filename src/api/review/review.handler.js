@@ -121,18 +121,21 @@ const deleteReview = async (reviewId, userId) => {
   return true;
 };
 const getAllReviews = async (skipValue, takeValue) => {
-  const reviews = await prisma.critica.findMany({
-    orderBy: {
-      fecha_creado: "desc",
-    },
+  const [reviews, totalResults] = await prisma.$transaction([
+    prisma.critica.findMany({
+      orderBy: {
+        fecha_creado: "desc",
+      },
 
-    take: takeValue,
-    skip: skipValue,
+      take: takeValue,
+      skip: skipValue,
 
-    include: {
-      Usuario: true,
-    },
-  });
+      include: {
+        Usuario: true,
+      },
+    }),
+    prisma.critica.count(),
+  ]);
 
   if (!reviews) {
     return [];
@@ -163,27 +166,35 @@ const getAllReviews = async (skipValue, takeValue) => {
 
   return {
     page: skipValue / takeValue + 1,
-    totalResults: reviews.length,
+    totalResults,
+    totalPages: Math.ceil(totalResults / takeValue),
     reviews: cleanReviews,
   };
 };
 
 const getAllReviewsByMovie = async (movieId, skipValue, takeValue) => {
-  const reviews = await prisma.critica.findMany({
-    orderBy: {
-      fecha_creado: "desc",
-    },
+  const [reviews, totalResults] = await prisma.$transaction([
+    prisma.critica.findMany({
+      orderBy: {
+        fecha_creado: "desc",
+      },
 
-    take: takeValue,
-    skip: skipValue,
+      take: takeValue,
+      skip: skipValue,
 
-    where: {
-      pelicula: movieId,
-    },
-    include: {
-      Usuario: true,
-    },
-  });
+      where: {
+        pelicula: movieId,
+      },
+      include: {
+        Usuario: true,
+      },
+    }),
+    prisma.critica.count({
+      where: {
+        pelicula: movieId,
+      },
+    }),
+  ]);
 
   if (!reviews) {
     return [];
@@ -208,7 +219,8 @@ const getAllReviewsByMovie = async (movieId, skipValue, takeValue) => {
 
   return {
     page: skipValue / takeValue + 1,
-    totalResults: reviews.length,
+    totalResults: totalResults,
+    totalPages: Math.ceil(totalResults / takeValue),
     pelicula: movie,
     reviews: cleanReviews,
   };

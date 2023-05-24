@@ -12,7 +12,7 @@ const {
   getAllReviewsByMovie,
 } = require("./review.handler");
 
-const PER_PAGE = 10;
+const PER_PAGE = 8;
 
 const createReviewController = async ({ body, user }, res, next) => {
   try {

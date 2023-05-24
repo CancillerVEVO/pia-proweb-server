@@ -56,6 +56,7 @@ model Tipo_Reaccion {
   id                  Int                   @id @default(autoincrement())
   nombre              String                @db.VarChar(50)
   descripcion         String                @db.VarChar(255)
+  imagenUrl           String                @db.VarChar(255)
   Reaccion_Comentario Reaccion_Comentario[]
 }
 
