@@ -3,6 +3,7 @@ const {
   NotFoundError,
   ForbiddenError,
 } = require("../../handlers/errors/AppError");
+const { buildCommentTree } = require("./comments.utils");
 
 const createComment = async (
   { comentarioPadreId, contenido },
@@ -154,8 +155,6 @@ const deleteComment = async (commentId, userId) => {
   return true;
 };
 
-const getAllComments = async (reviewId) => {};
-
 const getCommentById = async (commentId) => {
   const comment = await prisma.comentario.findUnique({
     where: {
@@ -183,6 +182,46 @@ const getCommentById = async (commentId) => {
       email: comment.Usuario.email,
     },
   };
+};
+
+const getAllComments = async (reviewId) => {
+  const isReview = await prisma.critica.findUnique({
+    where: {
+      id: reviewId,
+    },
+  });
+
+  if (!isReview) {
+    throw NotFoundError.create("La review no existe");
+  }
+
+  const comments = await prisma.comentario.findMany({
+    where: {
+      critica_id: reviewId,
+    },
+    include: {
+      Usuario: true,
+    },
+  });
+
+  if (comments.length === 0) {
+    return [];
+  }
+
+  const comentarios = comments.map((comment) => ({
+    id: comment.id,
+    contenido: comment.contenido,
+    comentarioPadreId: comment.comentario_padre,
+    fechaCreado: comment.fecha_creado,
+    fechaActualizado: comment.fecha_actualizado,
+    usuario: {
+      id: comment.Usuario.id,
+      nombre: comment.Usuario.nombre,
+      email: comment.Usuario.email,
+    },
+  }));
+
+  return buildCommentTree(comentarios);
 };
 
 module.exports = {

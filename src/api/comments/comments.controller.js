@@ -46,18 +46,21 @@ const deleteCommentController = async ({ params, user }, res, next) => {
     next(error);
   }
 };
-const getAllCommentsController = async (req, res, next) => {
-  try {
-    res.sendStatus(200);
-  } catch (error) {
-    next(error);
-  }
-};
+
 const getCommentByIdController = async ({ params }, res, next) => {
   try {
     const comentario = await getCommentById(Number(params.commentId));
 
     return successResponse({ comentario })(res);
+  } catch (error) {
+    next(error);
+  }
+};
+const getAllCommentsController = async ({ params }, res, next) => {
+  try {
+    const comentarios = await getAllComments(Number(params.reviewId));
+
+    return successResponse({ comentarios })(res);
   } catch (error) {
     next(error);
   }
