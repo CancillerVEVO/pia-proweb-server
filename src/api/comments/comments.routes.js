@@ -32,9 +32,8 @@ router.put(
 );
 
 router.delete(
-  "/:reviewId/comments/:commentId",
+  "/comments/:commentId",
   checkJWT,
-  reviewParamValidator,
   commentParamValidator,
   deleteCommentController
 );
@@ -46,8 +45,7 @@ router.get(
 );
 
 router.get(
-  "/:reviewId/comments/:commentId",
-  reviewParamValidator,
+  "/comments/:commentId",
   commentParamValidator,
   getCommentByIdController
 );

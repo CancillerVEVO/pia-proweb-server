@@ -37,9 +37,11 @@ const updateCommentController = async ({ params, body, user }, res, next) => {
     next(error);
   }
 };
-const deleteCommentController = async (req, res, next) => {
+const deleteCommentController = async ({ params, user }, res, next) => {
   try {
-    res.sendStatus(200);
+    await deleteComment(Number(params.commentId), Number(user));
+
+    return noContentResponse("Comentario eliminado con exito!")(res);
   } catch (error) {
     next(error);
   }
@@ -51,9 +53,11 @@ const getAllCommentsController = async (req, res, next) => {
     next(error);
   }
 };
-const getCommentByIdController = async (req, res, next) => {
+const getCommentByIdController = async ({ params }, res, next) => {
   try {
-    res.sendStatus(200);
+    const comentario = await getCommentById(Number(params.commentId));
+
+    return successResponse({ comentario })(res);
   } catch (error) {
     next(error);
   }

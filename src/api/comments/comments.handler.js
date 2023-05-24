@@ -102,6 +102,7 @@ const updateComment = async ({ contenido }, commentId, userId) => {
 
     data: {
       contenido,
+      fecha_actualizado: new Date(),
     },
 
     include: {
@@ -114,7 +115,8 @@ const updateComment = async ({ contenido }, commentId, userId) => {
     contenido: comentario.contenido,
     comentarioPadreId: comentario.comentario_padre,
     criticaId: comentario.critica_id,
-    fecha: comentario.fecha_creado,
+    fechaCreado: comentario.fecha_creado,
+    fechaActualizado: comentario.fecha_actualizado,
     usuario: {
       id: comentario.Usuario.id,
       nombre: comentario.Usuario.nombre,
@@ -123,11 +125,65 @@ const updateComment = async ({ contenido }, commentId, userId) => {
   };
 };
 
-const deleteComment = async (reviewId, commentId, userId) => {};
+const deleteComment = async (commentId, userId) => {
+  const isComment = await prisma.comentario.findUnique({
+    where: {
+      id: commentId,
+    },
+    include: {
+      Usuario: true,
+    },
+  });
+
+  if (!isComment) {
+    throw NotFoundError.create("El comentario no existe");
+  }
+
+  if (isComment.Usuario.id !== userId) {
+    throw ForbiddenError.create(
+      "No tienes permisos para eliminar este comentario"
+    );
+  }
+
+  await prisma.comentario.delete({
+    where: {
+      id: commentId,
+    },
+  });
+
+  return true;
+};
 
 const getAllComments = async (reviewId) => {};
 
-const getCommentById = async (reviewId, commentId) => {};
+const getCommentById = async (commentId) => {
+  const comment = await prisma.comentario.findUnique({
+    where: {
+      id: commentId,
+    },
+    include: {
+      Usuario: true,
+    },
+  });
+
+  if (!comment) {
+    throw NotFoundError.create("El comentario no existe");
+  }
+
+  return {
+    id: comment.id,
+    contenido: comment.contenido,
+    comentarioPadreId: comment.comentario_padre,
+    criticaId: comment.critica_id,
+    fechaCreado: comment.fecha_creado,
+    fechaActualizado: comment.fecha_actualizado,
+    usuario: {
+      id: comment.Usuario.id,
+      nombre: comment.Usuario.nombre,
+      email: comment.Usuario.email,
+    },
+  };
+};
 
 module.exports = {
   createComment,
