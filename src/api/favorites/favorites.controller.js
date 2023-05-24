@@ -1,5 +1,8 @@
-const { successResponse } = require("../../handlers/ResponseHandler");
-const { createFavorite } = require("./favorites.handler");
+const {
+  successResponse,
+  noContentResponse,
+} = require("../../handlers/ResponseHandler");
+const { createFavorite, deleteFavorite } = require("./favorites.handler");
 
 const createFavoriteController = async ({ params, user }, res, next) => {
   try {
@@ -14,9 +17,11 @@ const createFavoriteController = async ({ params, user }, res, next) => {
   }
 };
 
-const deleteFavoriteController = async (req, res, next) => {
+const deleteFavoriteController = async ({ params, user }, res, next) => {
   try {
-    return successResponse({}, "Tambien yo")(res);
+    await deleteFavorite(Number(params.reviewId), Number(user));
+
+    return noContentResponse("Favorito eliminado con exito!")(res);
   } catch (error) {
     next(error);
   }
