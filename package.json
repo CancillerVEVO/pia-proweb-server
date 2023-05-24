@@ -20,8 +20,8 @@
     "moviedb-promise": "^3.4.0"
   },
   "devDependencies": {
+    "jest": "^29.5.0",
     "nodemon": "^2.0.22",
-    "prisma": "^4.13.0",
-    "jest": "^29.5.0"
+    "prisma": "^4.13.0"
   }
 }

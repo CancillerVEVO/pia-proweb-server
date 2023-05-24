@@ -46,8 +46,7 @@ router.get(
   getAllReviewsByMovieController
 );
 
-router.use("/", require("../favorites/index"));
-
-/* router.use("/:reviewId/comments", require("../comment/comment.routes")); */
+router.use("/", require("../favorites"));
+router.use("/", require("../comments"));
 
 module.exports = router;
