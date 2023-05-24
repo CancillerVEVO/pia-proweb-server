@@ -1,5 +1,8 @@
 const { prisma } = require("../../database/prisma");
-const { NotFoundError } = require("../../handlers/errors/AppError");
+const {
+  NotFoundError,
+  ForbiddenError,
+} = require("../../handlers/errors/AppError");
 
 const createComment = async (
   { comentarioPadreId, contenido },
@@ -13,7 +16,7 @@ const createComment = async (
   });
 
   if (!isReview) {
-    throw new NotFoundError("La review no existe");
+    throw NotFoundError.create("La review no existe");
   }
 
   const createQuery = {
@@ -25,7 +28,6 @@ const createComment = async (
     },
     include: {
       Usuario: true,
-      Comentario: true,
     },
   };
 
@@ -37,7 +39,7 @@ const createComment = async (
       contenido: comentario.contenido,
       comentarioPadreId: comentario.comentario_padre,
       criticaId: comentario.critica_id,
-      fecha: comentario.fecha_creado,
+      fechaCreado: comentario.fecha_creado,
       usuario: {
         id: comentario.Usuario.id,
         nombre: comentario.Usuario.nombre,
@@ -53,10 +55,59 @@ const createComment = async (
   });
 
   if (!isComment) {
-    throw new NotFoundError("El comentario padre no existe");
+    throw NotFoundError.create("El comentario padre no existe");
   }
 
   const comentario = await prisma.comentario.create(createQuery);
+
+  return {
+    id: comentario.id,
+    contenido: comentario.contenido,
+    comentarioPadreId: comentario.comentario_padre,
+    criticaId: comentario.critica_id,
+    fechaCreado: comentario.fecha_creado,
+    usuario: {
+      id: comentario.Usuario.id,
+      nombre: comentario.Usuario.nombre,
+      email: comentario.Usuario.email,
+    },
+  };
+};
+
+const updateComment = async ({ contenido }, commentId, userId) => {
+  const isComment = await prisma.comentario.findUnique({
+    where: {
+      id: commentId,
+    },
+
+    include: {
+      Usuario: true,
+    },
+  });
+
+  if (!isComment) {
+    throw NotFoundError.create("El comentario no existe");
+  }
+
+  if (isComment.Usuario.id !== userId) {
+    throw ForbiddenError.create(
+      "No tienes permisos para editar este comentario"
+    );
+  }
+
+  const comentario = await prisma.comentario.update({
+    where: {
+      id: commentId,
+    },
+
+    data: {
+      contenido,
+    },
+
+    include: {
+      Usuario: true,
+    },
+  });
 
   return {
     id: comentario.id,
@@ -71,8 +122,6 @@ const createComment = async (
     },
   };
 };
-
-const updateComment = async ({ contenido }, reviewId, commentId, userId) => {};
 
 const deleteComment = async (reviewId, commentId, userId) => {};
 

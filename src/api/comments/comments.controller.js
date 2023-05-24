@@ -24,9 +24,15 @@ const createCommentController = async ({ params, body, user }, res, next) => {
     next(error);
   }
 };
-const updateCommentController = async (req, res, next) => {
+const updateCommentController = async ({ params, body, user }, res, next) => {
   try {
-    res.sendStatus(200);
+    const comentario = await updateComment(
+      body,
+      Number(params.commentId),
+      Number(user)
+    );
+
+    return successResponse({ comentario })(res);
   } catch (error) {
     next(error);
   }

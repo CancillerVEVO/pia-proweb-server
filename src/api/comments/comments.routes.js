@@ -2,6 +2,8 @@ const express = require("express");
 const {
   reviewParamValidator,
   commentParamValidator,
+  bodyCreateValidator,
+  bodyUpdateValidator,
 } = require("./comments.validator");
 const {
   createCommentController,
@@ -17,14 +19,15 @@ router.post(
   "/:reviewId/comments/",
   checkJWT,
   reviewParamValidator,
+  bodyCreateValidator,
   createCommentController
 );
 
 router.put(
-  "/:reviewId/comments/:commentId",
+  "/comments/:commentId",
   checkJWT,
-  reviewParamValidator,
   commentParamValidator,
+  bodyUpdateValidator,
   updateCommentController
 );
 
