@@ -165,6 +165,16 @@ const getCommentById = async (commentId) => {
     },
   });
 
+  const childrenComments = await prisma.comentario.findMany({
+    where: {
+      comentario_padre: commentId,
+    },
+
+    include: {
+      Usuario: true,
+    },
+  });
+
   if (!comment) {
     throw NotFoundError.create("El comentario no existe");
   }
@@ -181,6 +191,19 @@ const getCommentById = async (commentId) => {
       nombre: comment.Usuario.nombre,
       email: comment.Usuario.email,
     },
+    hijos: (childrenComments || []).map((childComment) => ({
+      id: childComment.id,
+      contenido: childComment.contenido,
+      comentarioPadreId: childComment.comentario_padre,
+      criticaId: childComment.critica_id,
+      fechaCreado: childComment.fecha_creado,
+      fechaActualizado: childComment.fecha_actualizado,
+      usuario: {
+        id: childComment.Usuario.id,
+        nombre: childComment.Usuario.nombre,
+        email: childComment.Usuario.email,
+      },
+    })),
   };
 };
 
