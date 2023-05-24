@@ -1,38 +1,48 @@
 const express = require("express");
-const checkJWT = require("../../middleware/session.middleware");
 const {
   reviewParamValidator,
   commentParamValidator,
-  bodyCreateValidator,
-  bodyUpdateValidator,
 } = require("./comments.validator");
+const {
+  createCommentController,
+  updateCommentController,
+  deleteCommentController,
+  getAllCommentsController,
+  getCommentByIdController,
+} = require("./comments.controller");
 const router = express.Router();
 
 router.post(
-  "/:reviewId/comments",
-  checkJWT,
+  "/:reviewId/comments/",
   reviewParamValidator,
-  bodyCreateValidator
+  createCommentController
 );
+
 router.put(
   "/:reviewId/comments/:commentId",
-  checkJWT,
   reviewParamValidator,
   commentParamValidator,
-  bodyUpdateValidator
+  updateCommentController
 );
+
 router.delete(
   "/:reviewId/comments/:commentId",
-  checkJWT,
   reviewParamValidator,
-  commentParamValidator
+  commentParamValidator,
+  deleteCommentController
 );
-router.get("/:reviewId/comments", checkJWT, reviewParamValidator);
+
+router.get(
+  "/:reviewId/comments/",
+  reviewParamValidator,
+  getAllCommentsController
+);
+
 router.get(
   "/:reviewId/comments/:commentId",
-  checkJWT,
   reviewParamValidator,
-  commentParamValidator
+  commentParamValidator,
+  getCommentByIdController
 );
 
 module.exports = router;

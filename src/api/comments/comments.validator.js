@@ -27,6 +27,9 @@ const commentParamValidator = [
 ];
 const bodyCreateValidator = [
   body("comentarioPadreId")
+    .optional({
+      nullable: true,
+    })
     .isInt()
     .withMessage("El id del comentario padre debe ser un numero entero")
     .custom((value) => {
@@ -35,6 +38,8 @@ const bodyCreateValidator = [
           "El id del comentario padre debe ser un numero positivo"
         );
       }
+
+      console.log("value", value);
       return true;
     }),
   body("contenido")
