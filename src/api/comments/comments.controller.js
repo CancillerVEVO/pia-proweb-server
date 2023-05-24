@@ -1,6 +1,25 @@
-const createCommentController = async (req, res, next) => {
+const {
+  createdResponse,
+  successResponse,
+  noContentResponse,
+} = require("../../handlers/ResponseHandler");
+const {
+  createComment,
+  updateComment,
+  deleteComment,
+  getAllComments,
+  getCommentById,
+} = require("./comments.handler");
+
+const createCommentController = async ({ params, body, user }, res, next) => {
   try {
-    res.sendStatus(200);
+    const comentario = await createComment(
+      body,
+      Number(params.reviewId),
+      Number(user)
+    );
+
+    return createdResponse({ comentario }, "Comentario creado con exito!")(res);
   } catch (error) {
     next(error);
   }

@@ -10,16 +10,19 @@ const {
   getAllCommentsController,
   getCommentByIdController,
 } = require("./comments.controller");
+const checkJWT = require("../../middleware/session.middleware");
 const router = express.Router();
 
 router.post(
   "/:reviewId/comments/",
+  checkJWT,
   reviewParamValidator,
   createCommentController
 );
 
 router.put(
   "/:reviewId/comments/:commentId",
+  checkJWT,
   reviewParamValidator,
   commentParamValidator,
   updateCommentController
@@ -27,6 +30,7 @@ router.put(
 
 router.delete(
   "/:reviewId/comments/:commentId",
+  checkJWT,
   reviewParamValidator,
   commentParamValidator,
   deleteCommentController
