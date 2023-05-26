@@ -223,6 +223,9 @@ const getAllComments = async (reviewId) => {
     prisma.comentario.findMany({
       where: {
         critica_id: reviewId,
+        AND: {
+          comentario_padre: null,
+        },
       },
       include: {
         Usuario: true,
@@ -251,11 +254,9 @@ const getAllComments = async (reviewId) => {
     },
   }));
 
-  const commentTree = buildCommentTree(comentarios);
-
   return {
-    totalResults: totalResults,
-    comentarios: commentTree,
+    totalComments: totalResults,
+    comentarios: comentarios,
   };
 };
 
