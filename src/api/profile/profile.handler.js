@@ -98,7 +98,84 @@ const updateProfile = async (userId, { nombre, biografia }) => {
     },
   };
 };
-const getFavorites = async (userId) => {};
+const getFavorites = async (userId) => {
+  const user = await prisma.usuario.findUnique({
+    where: {
+      id: userId,
+    },
+    include: {
+      Favorito: {
+        include: {
+          Critica: {
+            include: {
+              Usuario: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!user) {
+    throw NotFoundError.create("El usuario no existe");
+  }
+
+  if (!user.Favorito) {
+    return {
+      user: {
+        id: user.id,
+        nombre: user.nombre,
+        biografia: user.biografia,
+        fechaCreacion: user.fecha_creado,
+        fechaActualizacion: user.fecha_actualizado,
+        favoritos: [],
+      },
+    };
+  }
+
+  const reviews = user.Favorito.map((favorite) => ({
+    id: favorite.critica_id,
+    pelicula: favorite.Critica.pelicula,
+    titulo: favorite.Critica.titulo_critica,
+    contenido: favorite.Critica.contenido,
+    calificacion: favorite.Critica.calificacion,
+    fechaCreacion: favorite.Critica.fecha_creado,
+    autor: {
+      id: favorite.Critica.Usuario.id,
+      nombre: favorite.Critica.Usuario.nombre,
+      email: favorite.Critica.Usuario.email,
+    },
+    fechaFavoriteado: favorite.fecha_creado,
+  }));
+
+  const movies = await Promise.all(
+    reviews.map(async (review) => {
+      const pelicula = await tmdb.getMovieDetails({
+        movieId: review.pelicula,
+      });
+      return pelicula;
+    })
+  );
+
+  const cleanData = reviews.map((review, index) => ({
+    reseña: {
+      ...review,
+      pelicula: movies[index],
+    },
+  }));
+
+  return {
+    user: {
+      id: user.id,
+      nombre: user.nombre,
+      email: user.email,
+      biografia: user.biografia,
+      fechaCreacion: user.fecha_creado,
+      fechaActualizacion: user.fecha_actualizado,
+      favoritos: cleanData,
+    },
+  };
+};
 
 module.exports = {
   getProfile,

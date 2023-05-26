@@ -1,5 +1,9 @@
 const { successResponse } = require("../../handlers/ResponseHandler");
-const { getProfile, updateProfile } = require("./profile.handler");
+const {
+  getProfile,
+  updateProfile,
+  getFavorites,
+} = require("./profile.handler");
 
 const getProfileController = async (req, res, next) => {
   try {
@@ -21,7 +25,8 @@ const updateProfileController = async (req, res, next) => {
 
 const getFavoritesController = async (req, res, next) => {
   try {
-    res.send("Get Favorites");
+    const favorites = await getFavorites(Number(req.user));
+    return successResponse(favorites, "Favoritos obtenidos")(res);
   } catch (error) {
     next(error);
   }
