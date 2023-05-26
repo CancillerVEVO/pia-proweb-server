@@ -63,6 +63,9 @@ const me = async (id) => {
     where: {
       id,
     },
+    include: {
+      Rol: true,
+    },
   });
 
   if (!user) {
@@ -75,6 +78,7 @@ const me = async (id) => {
     email: user.email,
     biografia: user.biografia,
     fechaCreacion: user.fecha_creado,
+    rol: user.Rol.nombre,
   };
 };
 
