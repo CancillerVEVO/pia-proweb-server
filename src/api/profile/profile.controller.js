@@ -1,22 +1,25 @@
 const { successResponse } = require("../../handlers/ResponseHandler");
+const { getProfile, updateProfile } = require("./profile.handler");
 
-const getProfile = async (req, res, next) => {
+const getProfileController = async (req, res, next) => {
   try {
-    res.send("Get Profile");
+    const user = await getProfile(Number(req.user));
+    return successResponse(user, "Perfil obtenido")(res);
   } catch (error) {
     next(error);
   }
 };
 
-const updateProfile = async (req, res, next) => {
+const updateProfileController = async (req, res, next) => {
   try {
-    res.send("Update Profile");
+    const user = await updateProfile(Number(req.user), req.body);
+    return successResponse(user, "Perfil actualizado")(res);
   } catch (error) {
     next(error);
   }
 };
 
-const getFavorites = async (req, res, next) => {
+const getFavoritesController = async (req, res, next) => {
   try {
     res.send("Get Favorites");
   } catch (error) {
@@ -25,7 +28,7 @@ const getFavorites = async (req, res, next) => {
 };
 
 module.exports = {
-  getProfile,
-  updateProfile,
-  getFavorites,
+  getProfileController,
+  updateProfileController,
+  getFavoritesController,
 };

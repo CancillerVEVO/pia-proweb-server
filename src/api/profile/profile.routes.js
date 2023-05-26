@@ -1,14 +1,15 @@
 const express = require("express");
 const router = express.Router();
+const { updateProfileValidator } = require("./profile.validator");
 const checkJWT = require("../../middleware/session.middleware");
 const {
-  getProfile,
-  getFavorites,
-  updateProfile,
+  getProfileController,
+  getFavoritesController,
+  updateProfileController,
 } = require("./profile.controller");
 
-router.get("/", checkJWT, getProfile);
-router.put("/", checkJWT, updateProfile);
-router.get("/favorites", checkJWT, getFavorites);
+router.get("/", checkJWT, getProfileController);
+router.put("/", checkJWT, updateProfileValidator, updateProfileController);
+router.get("/favorites", checkJWT, getFavoritesController);
 
 module.exports = router;
