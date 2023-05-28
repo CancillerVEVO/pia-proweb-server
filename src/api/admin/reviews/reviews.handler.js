@@ -16,7 +16,7 @@ const getAllReviews = async () => {
     id: review.id,
     usuario_id: review.usuario_id,
     email: review.Usuario.email,
-    pelicula_id: review.pelicula_id,
+    pelicula_id: review.pelicula,
     titulo_critica: review.titulo_critica,
     contenido: review.contenido,
     calificacion: review.calificacion,
@@ -72,7 +72,7 @@ const deleteReview = async (id) => {
 
 const createReview = async ({
   usuario_id,
-  pelicula_id,
+  pelicula,
   titulo_critica,
   contenido,
   calificacion,
@@ -88,7 +88,7 @@ const createReview = async ({
   }
 
   const isMovie = await tmdb.getMovieDetails({
-    movieId: pelicula_id,
+    movieId: pelicula,
   });
 
   if (!isMovie) {
@@ -98,12 +98,14 @@ const createReview = async ({
   const review = await prisma.critica.create({
     data: {
       usuario_id,
-      pelicula_id,
+      pelicula,
       titulo_critica,
       contenido,
       calificacion,
     },
   });
+
+  return review;
 };
 
 module.exports = {
