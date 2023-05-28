@@ -21,7 +21,7 @@ const getAllReviews = async () => {
     contenido: review.contenido,
     calificacion: review.calificacion,
     fecha_creado: review.fecha_creado,
-    fecha_actualiado: review.fecha_actualizado,
+    fecha_actualizado: review.fecha_actualizado,
   }));
 };
 
