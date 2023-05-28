@@ -31,7 +31,6 @@ const createUserController = async ({ body }, res, next) => {
 
 const updateUserController = async ({ params, body }, res, next) => {
   try {
-    console.log(params.id);
     const user = await updateUser(Number(params.id), body);
 
     return successResponse({ user }, "Usuario actualizado")(res);
