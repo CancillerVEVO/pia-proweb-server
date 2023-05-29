@@ -38,8 +38,6 @@ const bodyCreateValidator = [
           "El id del comentario padre debe ser un numero positivo"
         );
       }
-
-      console.log("value", value);
       return true;
     }),
   body("contenido")
