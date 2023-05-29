@@ -73,7 +73,7 @@ const updateProfile = async (userId, { nombre, biografia }) => {
     },
   });
 
-  if (nameAlreadyTaken) {
+  if (nameAlreadyTaken && nameAlreadyTaken.id !== userId) {
     throw ForbiddenError.create("El nombre de usuario ya está en uso");
   }
 
